@@ -7,64 +7,43 @@ function TipCalculator() {
   const [split, setSplit] = useState('');
   const [tipAmount, setTipAmount] = useState(0);
   const [totalBill, setTotalBill] = useState(0);
-  const [perPersonAmount, setPerPersonAmount] = useState(0);
+  const [perPersonAmount, setPersonSplit] = useState(0);
 
-  const handleBillChange = (event) => {
-    const value = parseFloat(event.target.value);
-    setBill(value || '');
-    calculateTipAmount(value, parseFloat(tipPercentage), parseInt(split));
+
+  const calculateTotals = () => {
+    const billAmount = +bill;
+    const tip = (billAmount * +tipPercentage) / 100;
+    const total = billAmount + tip;
+    const personSplit = total / +split;
+
+    setTipAmount(tip.toFixed());
+    setTotalBill(total.toFixed());
+    setPersonSplit(personSplit.toFixed());
   };
-
-  const handleTipPercentageChange = (event) => {
-    const value = parseFloat(event.target.value);
-    setTipPercentage(value || '');
-    calculateTipAmount(parseFloat(bill), value, parseInt(split));
-  };
-
-  const handleSplitChange = (event) => {
-    const value = parseInt(event.target.value);
-    setSplit(value || '');
-    calculatePerPersonAmount(parseFloat(totalBill), value);
-  };
-
-  const calculateTipAmount = (bill, tipPercentage, split) => {
-    const tipAmount = (bill * tipPercentage) / 100;
-    const totalBill = bill + tipAmount;
-    setTipAmount(tipAmount);
-    setTotalBill(totalBill);
-    calculatePerPersonAmount(totalBill, split);
-  };
-
-  const calculatePerPersonAmount = (totalBill, split) => {
-    if (split > 0) {
-      const perPersonAmount = totalBill / split;
-      setPerPersonAmount(perPersonAmount);
-    } else {
-      setPerPersonAmount(0);
-    }
-  };
-
   return (
     <div>
       <h1>Tip Calculator</h1>
       <label>
         Bill: $
-        <input type="number" value={bill} onChange={handleBillChange} />
+        <input type="number" value={bill} onChange={(e) => setBill(e.target.value)} />
       </label>
       <br />
       <label>
         Tip %:
-        <input type="number" value={tipPercentage} onChange={handleTipPercentageChange} />
+        <input type="number" value={tipPercentage} onChange={(e) => setTipPercentage(e.target.value)} />
       </label>
       <br />
       <label>
         Split:
-        <input type="number" value={split} onChange={handleSplitChange} />
+        <input type="number" value={split} onChange={(e) => setSplit(e.target.value)} />
       </label>
       <br />
-      <p>Tip Amount: ${tipAmount.toFixed(2)}</p>
-      <p>Total Bill: ${totalBill.toFixed(2)}</p>
-      <p>Per Person Amount: ${perPersonAmount.toFixed(2)}</p>
+      <button onClick={calculateTotals}>Calculate</button>
+      <p>
+        <label>Tip Amount: ${tipAmount}</label><br />
+        <label>Total Bill: ${totalBill}</label><br />
+        {split && <label>Per Person: ${perPersonAmount}</label>}
+      </p>
     </div>
   );
 }
